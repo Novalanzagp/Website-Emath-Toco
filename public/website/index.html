@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>Home Page</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="assets/img/et.png" rel="icon"> <!--logo page-->
+  <link href="website\assets\img\emath-toco.png" rel="emath-toco"> <!--logo web-->
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="assets/css/style.css" rel="stylesheet">
+
+  <script>
+    function training1(){
+      const url = 'http://localhost:8888/notebooks/Documents/TA/Jupiter/metode.ipynb '
+      window.open(url);
+    }
+
+    function training2(){
+      const url = 'https://colab.research.google.com/drive/1EUNJJC7tjFLc2gnFWfiXOLAM0ZMofy2e?usp=sharing/'
+      window.open(url);
+    }
+
+    function training3(){
+      const url = 'https://colab.research.google.com/drive/1EUNJJC7tjFLc2gnFWfiXOLAM0ZMofy2e?usp=sharing/'
+      window.open(url);
+    }
+    
+    function download(){
+      const url = 'http://localhost:8888/notebooks/Documents/TA/Jupiter/Download%20storage.ipynb'
+      window.open(url);
+    }
+    
+  </script>
+
+</head>
+
+<body>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="index.html" class="logo d-flex align-items-center">
+        <!-- <img src="website\assets\img\emath-toco.png" alt="">  -->
+        <!--logo web-->
+        <span class="d-none d-lg-block">EMATH TOCO</span>
+      </a>
+    </div>
+    <!-- End Logo -->
+
+    <!-- Sign Out -->
+    <nav class="header-nav ms-auto">
+      <ul class="d-flex align-items-center">
+        <li class="nav-item">
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="../index.html">
+            <span class="d-flex align-items-center">Sign Out</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- End Sign Out -->
+
+  </header>
+  <!-- End Header -->
+
+  <main id="main" class="main">
+
+    <div class="pagetitle">
+      <h1>Dashboard</h1>
+    </div>
+    <!-- End Page Title -->
+
+    <section class="section dashboard">
+      <div class="row">
+
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            <!-- Data Mahasiswa Card -->
+            <div class="col-xxl-4 col-xl-12">
+              <div class="card info-card before-card">
+                <div class="card-body">
+                  <h5 class="card-title">Student Answer Datas</h5>
+
+                  <!-- Tabel untuk menampilkan data -->
+                  <div style="overflow-x:auto;">
+                  <table id="dataContainer" class="table">
+                    <thead>
+                      <tr>
+                        <th>Image</th>
+                        <th>Kelas</th>
+                        <th>Matkul</th>
+                        <th>Nama</th>
+                        <th>Nilai</th>
+                        <th>NIM</th>
+                        <th>Soal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Data akan ditambahkan di sini -->
+                    </tbody>
+                  </table>
+                  </div>
+                  <!-- Akhir tabel -->
+
+                  <div id="dataContainer">
+                    <!-- Data will be displayed here -->
+                  </div>
+                  
+                  <!------------------------- Firebase Config ------------------------------------>
+                  <script type="module">
+                    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js';
+                    import { getFirestore, getDocs, collectionGroup } from 'https://www.gstatic.com/firebasejs/10.0.0/firebase-firestore.js';
+
+                    const firebaseConfig = {
+                      // Put your firebase config values here
+                      apiKey: "AIzaSyAYWjSzIMVzXhnyKGymgdxHmoIagZZp01M",
+                      authDomain: "emathtoco-bec56.firebaseapp.com",
+                      databaseURL: "https://emathtoco-bec56-default-rtdb.firebaseio.com",
+                      projectId: "emathtoco-bec56",
+                      storageBucket: "emathtoco-bec56.appspot.com",
+                      messagingSenderId: "784908974272",
+                      appId: "1:784908974272:web:9cef11f196a698225d5525",
+                      measurementId: "G-NTMR4BZ9SZ"
+                    };
+
+                    const app = initializeApp(firebaseConfig);
+                    const db = getFirestore(app);
+
+                    const dataContainer = document.getElementById('dataContainer');
+
+                    async function displayData() {
+                      try {
+                        const querySnapshot = await getDocs(collectionGroup(db, 'inventory'));
+                        const tbody = document.querySelector("#dataContainer tbody");
+
+                        querySnapshot.forEach(doc => {
+                          const data = doc.data();
+                          console.log(data);
+
+                          // Buat sebuah baris baru untuk data
+                          const row = document.createElement('tr');
+                          row.innerHTML = `
+                          <td><a href=${data.imageUrl}>Download</a></td>
+                            <td>${data.kelas}</td>
+                            <td>${data.matkul}</td>
+                            <td>${data.nama}</td>
+                            <td>${data.nilai}</td>
+                            <td>${data.nim}</td>
+                            <td>${data.soal}</td>
+                          `;
+
+                          // Tambahkan baris ke dalam tabel
+                          tbody.appendChild(row);
+                        });
+
+                          // Create a new element to display the data (you can customize this based on your data structure)
+                          const itemDiv = document.createElement('div');
+                          itemDiv.textContent = `ImageUrl: ${data.imageUrl}, Kelas: ${data.kelas}, Matkul: ${data.matkul}, Nama: ${data.nama}, Nilai: ${data.nilai}, NIM: ${data.nim}, Soal: ${data.soal},`;
+
+                          // Append the new element to the dataContainer
+                          // dataContainer.appendChild(itemDiv);
+                        // });
+                      } catch (error) {
+                        console.error('Error fetching data:', error);
+                      }
+                    }
+                    
+
+                    // Call the displayData function to show the data on the website
+                    displayData();
+
+                  </script>
+
+                  <div class="">
+                    <!-- <h5>Training Data</h5> -->
+                    <button class="mb-2" onclick="download()">
+                      Download All Image
+                    </button>
+                  </div>
+
+                <!-- button -->
+                  <!-- <div class="container">
+                    <div class="row mb-3">
+                      <div class="col-sm-10">
+                        <button id="myButton" type="submit" class="btn btn-primary">Edit Score</button>
+                      </div>
+                    </div>
+                  </div>
+                
+                  <script>
+                    document.getElementById("myButton").onclick = function() {
+                      // Ganti 'halaman_lain.html' dengan nama file halaman HTML yang dituju.
+                      window.location.href = "COBAUPDATE.HTML";
+                    };
+                  </script> -->
+                <!-- end button -->
+                  
+              </div>
+            </div>
+            <!-- End Data Mahasiswa Card -->
+
+
+            <!-- Training Data Card -->
+            <div class="col-xxl-4 col-xl-12">
+              <div class="card info-card training-data-card">
+                <div class="card-body">
+                  <h5 class="card-title">   <span></h5>
+
+                  <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-people"></i>
+                      </div>
+                      <div class="">
+                        <h5>Training Data</h5>
+                        <button class="mb-2" onclick="training1()">
+                          Metode 1
+                        </button>
+                        <button class="mb-2" onclick="training2()">
+                          Metode 2
+                        </button>
+                        <button class="mb-2" onclick="training3()">
+                          Metode 3
+                        </button>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End Training Data Card -->
+
+          </div>
+        </div> 
+        <!-- End Left side columns -->
+
+      </div>
+    </section>
+  </main>
+  <!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <!-- <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; Copyright <strong><span>Emath Toco</span></strong>. All Rights Reserved
+    </div>
+    <div class="credits">
+    </div>
+  </footer> -->
+  <!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/vendor/simple-datatables/simple-datatables.js"></script>
+  <script src="assets/vendor/php-email-form/validate.js"></script>
+
+  <!-- Template Main JS File -->
+  <script src="assets/js/main.js"></script>
+
+</body>
+
+</html>

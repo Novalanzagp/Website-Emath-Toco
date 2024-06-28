@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+  
+    <!-- Favicons -->
+    <link href="assets/img/et.png" rel="icon">
+    <link href="assets/img/emath-toco.png" rel="emath-toco">
+  
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  
+    <!-- Vendor CSS Files -->
+    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="assets/vendor/simple-datatables/style.css" rel="stylesheet">
+  
+    <!-- Template Main CSS File -->
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <div class="d-flex align-items-center justify-content-between">
+        <a href="index.html" class="logo d-flex align-items-center">
+            <!-- <img src="website\assets\img\emath-toco.png" alt="">  -->
+            <!--logo web-->
+            <span class="d-none d-lg-block">EMATH TOCO</span>
+        </a>
+        </div>
+        <!-- End Logo -->
+
+        <!-- Sign Out -->
+        <nav class="header-nav ms-auto">
+        <ul class="d-flex align-items-center">
+            <li class="nav-item">
+            <a class="nav-link nav-profile d-flex align-items-center pe-0" href="../index.html">
+                <span class="d-flex align-items-center">Sign Out</span>
+            </a>
+            </li>
+        </ul>
+        </nav>
+        <!-- End Sign Out -->
+
+    </header><!-- End Header -->
+
+    <main id="main" class="main">
+        <!-- Left side columns -->
+        <div class="col-lg-8">
+          <div class="row">
+
+            <section class="section">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="card">
+                    <div class="card-body">
+                      <h5 class="card-title">Upload The Answer Key</h5>
+                        <!-- <h2>Upload The Answer Key</h2> -->
+                        <input type="file" multiple="multiple" id="file">
+                        <button id="upload">Upload File</button>
+                        <p id="progress_upload"></p>
+
+                        <script type="module">
+                            // Import the functions you need from the SDKs you need
+                            import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+                            // TODO: Add SDKs for Firebase products that you want to use
+                            // https://firebase.google.com/docs/web/setup#available-libraries
+                            
+                            // Your web app's Firebase configuration
+                            const firebaseConfig = {
+                                apiKey: "AIzaSyAYWjSzIMVzXhnyKGymgdxHmoIagZZp01M",
+                                authDomain: "emathtoco-bec56.firebaseapp.com",
+                                databaseURL: "https://emathtoco-bec56-default-rtdb.firebaseio.com",
+                                projectId: "emathtoco-bec56",
+                                storageBucket: "emathtoco-bec56.appspot.com",
+                                messagingSenderId: "784908974272",
+                                appId: "1:784908974272:web:9cef11f196a698225d5525",
+                                measurementId: "G-NTMR4BZ9SZ"
+
+                            };
+                            
+                            // Initialize Firebase
+                            const app = initializeApp(firebaseConfig);
+                            console.log("Success connected");
+                        
+                            
+                            import { getStorage, ref, uploadBytesResumable } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-storage.js";
+                            const storage = getStorage();
+                            import { getDatabase, ref as dbRef, set } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+                            const db = getDatabase();
+
+                            // 'file' comes from the Blob or File API
+                            document.getElementById("upload").addEventListener("click",function(event){
+                                let data = document.getElementById("file").files;
+                                let user_id = "1685157788127"; //nanti ambil dari authentication
+                                for(let ii=0;ii<data.length;ii++){
+                                    let file = data[ii];
+                                    let timestamp = Date.now();
+                                    let extension = "."+file.type.split('image/').pop(); //khusus image
+                                    const storageRef = ref(storage, "kunci/"+user_id+"/"+user_id+"_"+timestamp+extension);
+                                    const uploadTask = uploadBytesResumable(storageRef, file);
+
+                                    uploadTask.on('state_changed',
+                                    (snapshot) => {
+                                        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                        document.getElementById("progress_upload").innerHTML = 'Upload is ' + progress + '% done';
+                                    });
+                                    
+                                    set(dbRef(db, 'mahasiswa/' + user_id + '/file/' + timestamp), {
+                                        nama_file: user_id+"_"+timestamp+extension,
+                                        path_file: "kunci/"+user_id+"/"
+                                    });
+                                }
+                            });
+                        </script>
+        </script>
+</body>
+</html>

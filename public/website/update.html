@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+    <h2>DATA MAHASISWA</h2>
+    <table>
+        <tr>
+            <td>Kelas</td>
+            <td>:</td>
+            <td><input type="text" id="name" placeholder="Kelas"></td>
+        </tr>
+        <tr>
+            <td>Matkul</td>
+            <td>:</td>
+            <td><input type="text" id="name" placeholder="Mata Kuliah"></td>
+        </tr>
+        <tr>
+            <td>Nama</td>
+            <td>:</td>
+            <td><input type="text" id="name" placeholder="Nama Lengkap"></td>
+        </tr>
+        <tr>
+            <td>Nilai</td>
+            <td>:</td>
+            <td><input type="text" id="name" placeholder="Nilai"></td>
+        </tr>
+        <tr>
+            <td>NIM</td>
+            <td>:</td>
+            <td><input type="text" id="nim" placeholder="NIM"></td>
+        </tr>
+        <tr>
+            <td>Soal</td>
+            <td>:</td>
+            <td><input type="text" id="soal" placeholder="soal"></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td><button id="update">Update</button></td>
+        </tr>
+        <input id="userid" hidden>
+    </table>
+    <hr>
+    <table id="data_mahasiswa">
+        
+    </table>
+
+
+    <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+    
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAYWjSzIMVzXhnyKGymgdxHmoIagZZp01M",
+        authDomain: "emathtoco-bec56.firebaseapp.com",
+        databaseURL: "https://emathtoco-bec56-default-rtdb.firebaseio.com",
+        projectId: "emathtoco-bec56",
+        storageBucket: "emathtoco-bec56.appspot.com",
+        messagingSenderId: "784908974272",
+        appId: "1:784908974272:web:9cef11f196a698225d5525",
+        measurementId: "G-NTMR4BZ9SZ"
+
+    };
+    
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    console.log("Success connected");
+
+
+    import { getDatabase, ref, set, onValue, update} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+    const db = getDatabase();
+
+        const starCountRef = ref(db, 'mahasiswa/');
+        onValue(starCountRef, (snapshot) => {
+            const data = snapshot.val();
+
+            document.getElementById("data_mahasiswa").innerHTML = "<tr>"+
+            "<td>No</td>"+
+            "<td>Kelas</td>"+
+            "<td>Matkul</td>"+
+            "<td>Nama</td>"+
+            "<td>Nilai</td>"+
+            "<td>NIM</td>"+
+            "<td>Soal</td>"+
+            "<td>Edit</td>"+
+            "</tr>";
+
+            const userId = Object.keys(data);
+            for(let ii = 0; ii < userId.length; ii++){
+                let no = ii+1;
+                document.getElementById("data_mahasiswa").innerHTML += "<tr>"+
+                    "<td>"+no+"</td>"+
+                    "<td id='kelas"+userId[ii]+"'>"+data[userId[ii]].kelas_db+"</td>"+
+                    "<td id='matkul"+userId[ii]+"'>"+data[userId[ii]].matkul_db+"</td>"+
+                    "<td id='nama"+userId[ii]+"'>"+data[userId[ii]].nama_db+"</td>"+
+                    "<td id='nilai"+userId[ii]+"'>"+data[userId[ii]].nilai_db+"</td>"+
+                    "<td id='nim"+userId[ii]+"'>"+data[userId[ii]].nim_db+"</td>"+
+                    "<td id='soal"+userId[ii]+"'>"+data[userId[ii]].soal_db+"</td>"+
+                    "<td><button onclick='send("+userId[ii]+")'>EDIT</button></td>"+
+                    "</tr>";
+            }
+            document.getElementById("update").addEventListener("click", function(event){
+                
+                let kelas = document.getElementById("nama").value;
+                let matkul = document.getElementById("matkul").value;
+                let nama = document.getElementById("nama").value;
+                let nilai = document.getElementById("nilai").value;
+                let nim = document.getElementById("nim").value;
+                let soal = document.getElementById("soal").value;
+                let userid = document.getElementById("userid").value;
+
+                const data_user = {
+                    kelas_db: kelas,
+                    matkul_db: matkul,
+                    nama_db: nama,
+                    nilai_db: nilai,
+                    nim_db: nim,
+                    soal_db: soal
+                };
+
+                update(ref(db, 'mahasiswa/' + userid), data_user);
+                alert("Data is updated!")
+            });
+        });
+    </script>
+
+    <script>
+        function send(key){
+            document.getElementById("userid").value = key;
+            document.getElementById("kelas").value = document.getElementById("kelas"+key).innerHTML;
+            document.getElementById("matkul").value = document.getElementById("matkul"+key).innerHTML;
+            document.getElementById("nama").value = document.getElementById("nama"+key).innerHTML;
+            document.getElementById("nilai").value = document.getElementById("nilai"+key).innerHTML;
+            document.getElementById("nim").value = document.getElementById("nim"+key).innerHTML;
+            document.getElementById("soal").value = document.getElementById("soal"+key).innerHTML;
+        }
+    </script>
+</body>
+</html>
